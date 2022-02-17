@@ -1,0 +1,307 @@
+We found these types between in each files:
+	In file 'I19_ann.txt' we found: {'N': 1212, 'V': 850, 'B': 1}
+	In file 'I56_ann.txt' we found: {'N': 1672, 'V': 7, 'A': 26}
+	In file 'I01_ann.txt' we found: {'N': 2413, 'V': 344}
+	In file 'I02_ann.txt' we found: {'N': 2445, 'V': 229}
+	In file 'I03_ann.txt' we found: {'N': 2325, 'V': 125, 'A': 2}
+	In file 'I04_ann.txt' we found: {'N': 2270, 'F': 17, 'A': 16, 'V': 121}
+	In file 'I05_ann.txt' we found: {'N': 1520, 'V': 247, 'F': 9}
+	In file 'I06_ann.txt' we found: {'N': 2436, 'A': 48, 'V': 9}
+	In file 'I07_ann.txt' we found: {'N': 2640, 'A': 65, 'V': 1}
+	In file 'I08_ann.txt' we found: {'N': 1777, 'V': 351, 'A': 2, 'Q': 1}
+	In file 'I09_ann.txt' we found: {'N': 2948, 'V': 41, 'n': 8}
+	In file 'I10_ann.txt' we found: {'N': 3599, 'V': 83}
+	In file 'I11_ann.txt' we found: {'N': 2078, 'n': 24, 'V': 4}
+	In file 'I12_ann.txt' we found: {'N': 2800, 'V': 6, 'F': 2, 'A': 1}
+	In file 'I13_ann.txt' we found: {'N': 1793, 'V': 230}
+	In file 'I14_ann.txt' we found: {'N': 1802, 'V': 64}
+	In file 'I15_ann.txt' we found: {'N': 2632, 'V': 3}
+	In file 'I16_ann.txt' we found: {'R': 1520, 'V': 2}
+	In file 'I17_ann.txt' we found: {'R': 1646, 'V': 27}
+	In file 'I18_ann.txt' we found: {'N': 2662, 'V': 366, 'F': 56}
+	In file 'I20_ann.txt' we found: {'N': 2361, 'A': 179, 'V': 111, 'F': 1}
+	In file 'I21_ann.txt' we found: {'N': 2072, 'A': 104, 'V': 8}
+	In file 'I22_ann.txt' we found: {'N': 2816, 'V': 185, 'A': 124, 'F': 1}
+	In file 'I23_ann.txt' we found: {'N': 2192, 'V': 13}
+	In file 'I24_ann.txt' we found: {'N': 2565, 'V': 6}
+	In file 'I25_ann.txt' we found: {'N': 1705, 'V': 5, 'A': 2}
+	In file 'I26_ann.txt' we found: {'N': 1498, 'V': 4, 'A': 5, 'S': 2}
+	In file 'I27_ann.txt' we found: {'N': 1885, 'V': 720}
+	In file 'I28_ann.txt' we found: {'N': 1713, 'V': 4}
+	In file 'I29_ann.txt' we found: {'N': 1837, 'V': 783, 'Q': 1}
+	In file 'I30_ann.txt' we found: {'N': 1706, 'V': 756}
+	In file 'I31_ann.txt' we found: {'N': 1844, 'V': 1365, 'Q': 1}
+	In file 'I32_ann.txt' we found: {'N': 1562, 'V': 57}
+	In file 'I33_ann.txt' we found: {'A': 591, 'N': 1245, 'V': 1}
+	In file 'I34_ann.txt' we found: {'N': 1429, 'A': 536}
+	In file 'I35_ann.txt' we found: {'V': 458, 'N': 3200, 'F': 18}
+	In file 'I36_ann.txt' we found: {'N': 3449, 'V': 450, 'F': 12}
+	In file 'I37_ann.txt' we found: {'N': 2009, 'V': 452}
+	In file 'I38_ann.txt' we found: {'V': 545, 'N': 2153, 'Q': 1}
+	In file 'I39_ann.txt' we found: {'N': 1462, 'V': 313}
+	In file 'I40_ann.txt' we found: {'N': 2568, 'A': 6, 'V': 92}
+	In file 'I41_ann.txt' we found: {'N': 1624, 'A': 5, 'V': 1}
+	In file 'I42_ann.txt' we found: {'N': 1546, 'V': 1554, 'F': 9}
+	In file 'I43_ann.txt' we found: {'N': 1087, 'V': 1120, 'F': 2}
+	In file 'I44_ann.txt' we found: {'V': 684, 'N': 1803, 'A': 8}
+	In file 'I45_ann.txt' we found: {'N': 1437, 'V': 491}
+	In file 'I46_ann.txt' we found: {'N': 2232, 'V': 422, 'F': 3, 'A': 1}
+	In file 'I47_ann.txt' we found: {'N': 1859, 'V': 93, 'A': 1}
+	In file 'I48_ann.txt' we found: {'N': 2119, 'V': 235, 'F': 1, 'A': 2}
+	In file 'I49_ann.txt' we found: {'+': 1, 'N': 2120, 'V': 27}
+	In file 'I50_ann.txt' we found: {'+': 1, 'N': 2994, 'V': 4}
+	In file 'I51_ann.txt' we found: {'V': 803, 'N': 1970, 'F': 1, 'A': 3}
+	In file 'I52_ann.txt' we found: {'N': 1610, 'V': 137}
+	In file 'I53_ann.txt' we found: {'N': 1151, 'V': 1111}
+	In file 'I54_ann.txt' we found: {'N': 2340, 'V': 22, 'A': 1}
+	In file 'I55_ann.txt' we found: {'N': 2148, 'V': 17, 'A': 1}
+	In file 'I57_ann.txt' we found: {'N': 2842, 'V': 21, 'F': 3, 'Q': 2, 'A': 3}
+	In file 'I58_ann.txt' we found: {'N': 2313, 'V': 12}
+	In file 'I59_ann.txt' we found: {'N': 2026, 'j': 41, 'V': 81}
+	In file 'I60_ann.txt' we found: {'N': 2424, 'j': 51}
+	In file 'I61_ann.txt' we found: {'N': 1453, 'A': 1}
+	In file 'I62_ann.txt' we found: {'N': 1453, 'A': 5, 'V': 795, 'F': 12, 'S': 4}
+	In file 'I63_ann.txt' we found: {'N': 1847, 'V': 138, 'S': 1, 'F': 8}
+	In file 'I64_ann.txt' we found: {'N': 1887, 'V': 23, 'F': 3}
+	In file 'I65_ann.txt' we found: {'N': 2273, 'V': 382, 'A': 2, 'F': 4, 'S': 3}
+	In file 'I66_ann.txt' we found: {'N': 2139, 'V': 200, 'S': 1}
+	In file 'I67_ann.txt' we found: {'N': 2438, 'V': 531, 'S': 5, 'F': 1}
+	In file 'I68_ann.txt' we found: {'+': 1, 'N': 2481, 'V': 161, 'A': 2}
+	In file 'I69_ann.txt' we found: {'N': 2000, '+': 1, 'V': 167, 'F': 1, 'A': 1}
+	In file 'I70_ann.txt' we found: {'+': 1, 'N': 1540, 'A': 126}
+	In file 'I71_ann.txt' we found: {'+': 7, 'N': 1627, 'A': 35, 'R': 8}
+	In file 'I72_ann.txt' we found: {'N': 1876, 'V': 386, 'A': 8}
+	In file 'I73_ann.txt' we found: {'N': 1890, 'V': 70, 'A': 32}
+	In file 'I74_ann.txt' we found: {'N': 2083, 'V': 274, 'F': 48}
+We found these types between all files:
+	Type 'N': Found 148927 times
+		Found 1212 times in file 'I19_ann.txt'
+		Found 1672 times in file 'I56_ann.txt'
+		Found 2413 times in file 'I01_ann.txt'
+		Found 2445 times in file 'I02_ann.txt'
+		Found 2325 times in file 'I03_ann.txt'
+		Found 2270 times in file 'I04_ann.txt'
+		Found 1520 times in file 'I05_ann.txt'
+		Found 2436 times in file 'I06_ann.txt'
+		Found 2640 times in file 'I07_ann.txt'
+		Found 1777 times in file 'I08_ann.txt'
+		Found 2948 times in file 'I09_ann.txt'
+		Found 3599 times in file 'I10_ann.txt'
+		Found 2078 times in file 'I11_ann.txt'
+		Found 2800 times in file 'I12_ann.txt'
+		Found 1793 times in file 'I13_ann.txt'
+		Found 1802 times in file 'I14_ann.txt'
+		Found 2632 times in file 'I15_ann.txt'
+		Found 2662 times in file 'I18_ann.txt'
+		Found 2361 times in file 'I20_ann.txt'
+		Found 2072 times in file 'I21_ann.txt'
+		Found 2816 times in file 'I22_ann.txt'
+		Found 2192 times in file 'I23_ann.txt'
+		Found 2565 times in file 'I24_ann.txt'
+		Found 1705 times in file 'I25_ann.txt'
+		Found 1498 times in file 'I26_ann.txt'
+		Found 1885 times in file 'I27_ann.txt'
+		Found 1713 times in file 'I28_ann.txt'
+		Found 1837 times in file 'I29_ann.txt'
+		Found 1706 times in file 'I30_ann.txt'
+		Found 1844 times in file 'I31_ann.txt'
+		Found 1562 times in file 'I32_ann.txt'
+		Found 1245 times in file 'I33_ann.txt'
+		Found 1429 times in file 'I34_ann.txt'
+		Found 3200 times in file 'I35_ann.txt'
+		Found 3449 times in file 'I36_ann.txt'
+		Found 2009 times in file 'I37_ann.txt'
+		Found 2153 times in file 'I38_ann.txt'
+		Found 1462 times in file 'I39_ann.txt'
+		Found 2568 times in file 'I40_ann.txt'
+		Found 1624 times in file 'I41_ann.txt'
+		Found 1546 times in file 'I42_ann.txt'
+		Found 1087 times in file 'I43_ann.txt'
+		Found 1803 times in file 'I44_ann.txt'
+		Found 1437 times in file 'I45_ann.txt'
+		Found 2232 times in file 'I46_ann.txt'
+		Found 1859 times in file 'I47_ann.txt'
+		Found 2119 times in file 'I48_ann.txt'
+		Found 2120 times in file 'I49_ann.txt'
+		Found 2994 times in file 'I50_ann.txt'
+		Found 1970 times in file 'I51_ann.txt'
+		Found 1610 times in file 'I52_ann.txt'
+		Found 1151 times in file 'I53_ann.txt'
+		Found 2340 times in file 'I54_ann.txt'
+		Found 2148 times in file 'I55_ann.txt'
+		Found 2842 times in file 'I57_ann.txt'
+		Found 2313 times in file 'I58_ann.txt'
+		Found 2026 times in file 'I59_ann.txt'
+		Found 2424 times in file 'I60_ann.txt'
+		Found 1453 times in file 'I61_ann.txt'
+		Found 1453 times in file 'I62_ann.txt'
+		Found 1847 times in file 'I63_ann.txt'
+		Found 1887 times in file 'I64_ann.txt'
+		Found 2273 times in file 'I65_ann.txt'
+		Found 2139 times in file 'I66_ann.txt'
+		Found 2438 times in file 'I67_ann.txt'
+		Found 2481 times in file 'I68_ann.txt'
+		Found 2000 times in file 'I69_ann.txt'
+		Found 1540 times in file 'I70_ann.txt'
+		Found 1627 times in file 'I71_ann.txt'
+		Found 1876 times in file 'I72_ann.txt'
+		Found 1890 times in file 'I73_ann.txt'
+		Found 2083 times in file 'I74_ann.txt'
+	Type 'V': Found 19400 times
+		Found 850 times in file 'I19_ann.txt'
+		Found 7 times in file 'I56_ann.txt'
+		Found 344 times in file 'I01_ann.txt'
+		Found 229 times in file 'I02_ann.txt'
+		Found 125 times in file 'I03_ann.txt'
+		Found 121 times in file 'I04_ann.txt'
+		Found 247 times in file 'I05_ann.txt'
+		Found 9 times in file 'I06_ann.txt'
+		Found 1 times in file 'I07_ann.txt'
+		Found 351 times in file 'I08_ann.txt'
+		Found 41 times in file 'I09_ann.txt'
+		Found 83 times in file 'I10_ann.txt'
+		Found 4 times in file 'I11_ann.txt'
+		Found 6 times in file 'I12_ann.txt'
+		Found 230 times in file 'I13_ann.txt'
+		Found 64 times in file 'I14_ann.txt'
+		Found 3 times in file 'I15_ann.txt'
+		Found 2 times in file 'I16_ann.txt'
+		Found 27 times in file 'I17_ann.txt'
+		Found 366 times in file 'I18_ann.txt'
+		Found 111 times in file 'I20_ann.txt'
+		Found 8 times in file 'I21_ann.txt'
+		Found 185 times in file 'I22_ann.txt'
+		Found 13 times in file 'I23_ann.txt'
+		Found 6 times in file 'I24_ann.txt'
+		Found 5 times in file 'I25_ann.txt'
+		Found 4 times in file 'I26_ann.txt'
+		Found 720 times in file 'I27_ann.txt'
+		Found 4 times in file 'I28_ann.txt'
+		Found 783 times in file 'I29_ann.txt'
+		Found 756 times in file 'I30_ann.txt'
+		Found 1365 times in file 'I31_ann.txt'
+		Found 57 times in file 'I32_ann.txt'
+		Found 1 times in file 'I33_ann.txt'
+		Found 458 times in file 'I35_ann.txt'
+		Found 450 times in file 'I36_ann.txt'
+		Found 452 times in file 'I37_ann.txt'
+		Found 545 times in file 'I38_ann.txt'
+		Found 313 times in file 'I39_ann.txt'
+		Found 92 times in file 'I40_ann.txt'
+		Found 1 times in file 'I41_ann.txt'
+		Found 1554 times in file 'I42_ann.txt'
+		Found 1120 times in file 'I43_ann.txt'
+		Found 684 times in file 'I44_ann.txt'
+		Found 491 times in file 'I45_ann.txt'
+		Found 422 times in file 'I46_ann.txt'
+		Found 93 times in file 'I47_ann.txt'
+		Found 235 times in file 'I48_ann.txt'
+		Found 27 times in file 'I49_ann.txt'
+		Found 4 times in file 'I50_ann.txt'
+		Found 803 times in file 'I51_ann.txt'
+		Found 137 times in file 'I52_ann.txt'
+		Found 1111 times in file 'I53_ann.txt'
+		Found 22 times in file 'I54_ann.txt'
+		Found 17 times in file 'I55_ann.txt'
+		Found 21 times in file 'I57_ann.txt'
+		Found 12 times in file 'I58_ann.txt'
+		Found 81 times in file 'I59_ann.txt'
+		Found 795 times in file 'I62_ann.txt'
+		Found 138 times in file 'I63_ann.txt'
+		Found 23 times in file 'I64_ann.txt'
+		Found 382 times in file 'I65_ann.txt'
+		Found 200 times in file 'I66_ann.txt'
+		Found 531 times in file 'I67_ann.txt'
+		Found 161 times in file 'I68_ann.txt'
+		Found 167 times in file 'I69_ann.txt'
+		Found 386 times in file 'I72_ann.txt'
+		Found 70 times in file 'I73_ann.txt'
+		Found 274 times in file 'I74_ann.txt'
+	Type 'B': Found 1 times
+		Found 1 times in file 'I19_ann.txt'
+	Type 'A': Found 1944 times
+		Found 26 times in file 'I56_ann.txt'
+		Found 2 times in file 'I03_ann.txt'
+		Found 16 times in file 'I04_ann.txt'
+		Found 48 times in file 'I06_ann.txt'
+		Found 65 times in file 'I07_ann.txt'
+		Found 2 times in file 'I08_ann.txt'
+		Found 1 times in file 'I12_ann.txt'
+		Found 179 times in file 'I20_ann.txt'
+		Found 104 times in file 'I21_ann.txt'
+		Found 124 times in file 'I22_ann.txt'
+		Found 2 times in file 'I25_ann.txt'
+		Found 5 times in file 'I26_ann.txt'
+		Found 591 times in file 'I33_ann.txt'
+		Found 536 times in file 'I34_ann.txt'
+		Found 6 times in file 'I40_ann.txt'
+		Found 5 times in file 'I41_ann.txt'
+		Found 8 times in file 'I44_ann.txt'
+		Found 1 times in file 'I46_ann.txt'
+		Found 1 times in file 'I47_ann.txt'
+		Found 2 times in file 'I48_ann.txt'
+		Found 3 times in file 'I51_ann.txt'
+		Found 1 times in file 'I54_ann.txt'
+		Found 1 times in file 'I55_ann.txt'
+		Found 3 times in file 'I57_ann.txt'
+		Found 1 times in file 'I61_ann.txt'
+		Found 5 times in file 'I62_ann.txt'
+		Found 2 times in file 'I65_ann.txt'
+		Found 2 times in file 'I68_ann.txt'
+		Found 1 times in file 'I69_ann.txt'
+		Found 126 times in file 'I70_ann.txt'
+		Found 35 times in file 'I71_ann.txt'
+		Found 8 times in file 'I72_ann.txt'
+		Found 32 times in file 'I73_ann.txt'
+	Type 'F': Found 212 times
+		Found 17 times in file 'I04_ann.txt'
+		Found 9 times in file 'I05_ann.txt'
+		Found 2 times in file 'I12_ann.txt'
+		Found 56 times in file 'I18_ann.txt'
+		Found 1 times in file 'I20_ann.txt'
+		Found 1 times in file 'I22_ann.txt'
+		Found 18 times in file 'I35_ann.txt'
+		Found 12 times in file 'I36_ann.txt'
+		Found 9 times in file 'I42_ann.txt'
+		Found 2 times in file 'I43_ann.txt'
+		Found 3 times in file 'I46_ann.txt'
+		Found 1 times in file 'I48_ann.txt'
+		Found 1 times in file 'I51_ann.txt'
+		Found 3 times in file 'I57_ann.txt'
+		Found 12 times in file 'I62_ann.txt'
+		Found 8 times in file 'I63_ann.txt'
+		Found 3 times in file 'I64_ann.txt'
+		Found 4 times in file 'I65_ann.txt'
+		Found 1 times in file 'I67_ann.txt'
+		Found 1 times in file 'I69_ann.txt'
+		Found 48 times in file 'I74_ann.txt'
+	Type 'Q': Found 6 times
+		Found 1 times in file 'I08_ann.txt'
+		Found 1 times in file 'I29_ann.txt'
+		Found 1 times in file 'I31_ann.txt'
+		Found 1 times in file 'I38_ann.txt'
+		Found 2 times in file 'I57_ann.txt'
+	Type 'n': Found 32 times
+		Found 8 times in file 'I09_ann.txt'
+		Found 24 times in file 'I11_ann.txt'
+	Type 'R': Found 3174 times
+		Found 1520 times in file 'I16_ann.txt'
+		Found 1646 times in file 'I17_ann.txt'
+		Found 8 times in file 'I71_ann.txt'
+	Type 'S': Found 16 times
+		Found 2 times in file 'I26_ann.txt'
+		Found 4 times in file 'I62_ann.txt'
+		Found 1 times in file 'I63_ann.txt'
+		Found 3 times in file 'I65_ann.txt'
+		Found 1 times in file 'I66_ann.txt'
+		Found 5 times in file 'I67_ann.txt'
+	Type '+': Found 12 times
+		Found 1 times in file 'I49_ann.txt'
+		Found 1 times in file 'I50_ann.txt'
+		Found 1 times in file 'I68_ann.txt'
+		Found 1 times in file 'I69_ann.txt'
+		Found 1 times in file 'I70_ann.txt'
+		Found 7 times in file 'I71_ann.txt'
+	Type 'j': Found 92 times
+		Found 41 times in file 'I59_ann.txt'
+		Found 51 times in file 'I60_ann.txt'
