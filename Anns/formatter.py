@@ -11,7 +11,6 @@ def open_if(file, condition: bool, mode: str):
         yield open(file, mode)
     else:
         yield None
-    pass
 
 
 def format_file(file: str) -> dict:
@@ -28,8 +27,13 @@ def format_file(file: str) -> dict:
             minutes = int(time[0:time.index(":")])
             seconds = int(time[time.index(":") + 1:time.index(".")]) + minutes * 60
             milliseconds = int(time[time.index(".") + 1:]) + seconds * 1000
+
             time_delta = milliseconds - prev_time
             prev_time = milliseconds
+
+            # Removing some outliers caused on the first beat happening too early
+            if milliseconds < 150:
+                continue
 
             # data[2] is the type
             type = data[2]
@@ -44,7 +48,7 @@ def format_file(file: str) -> dict:
                 should_be_filtered = 0
 
             if file_write is not None:
-                file_write.write(f"{time_delta}\t{should_be_filtered}\n")
+                file_write.write(f"{time_delta}\t{should_be_filtered}\t{milliseconds}\n")
 
     print(f"\tTypes found in file \"{file}\": {possible_types}")
     return possible_types
@@ -78,10 +82,6 @@ def main():
                 fw.write(f"\tType \'{t}\': Found {total_times} times\n")
                 for file in types[t]:
                     fw.write(f"\t\tFound {types[t][file]} times in file \'{file}\'\n")
-
-
-
-
 
 
 '''

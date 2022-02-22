@@ -1,10 +1,17 @@
 import argparse
 import os
+from contextlib import contextmanager
 
 
 class WindowError(Exception):
     pass
 
+@contextmanager
+def open_if(file, condition: bool, mode: str):
+    if condition:
+        yield open(file, mode)
+    else:
+        yield None
 
 def map_beat_type(beat_type: str) -> str:
     return beat_type
@@ -53,12 +60,16 @@ def process_file(file: str, window_bkw: int, window_fwd: int) -> None:
     if not os.path.isdir(directory):
         os.mkdir(directory)
 
-    with open(file) as file_read, open(f"b{window_bkw}_f{window_fwd}/{file}", "x") as file_write:
+    file_write = f"{directory}/{file}"
+    with open(file) as file_read, open_if(file_write, not os.path.isfile(file_write), "x") as file_write:
+        if file_write is None:
+            return
+
         lines = file_read.readlines()
 
         # Next line writes the header, as i+n where n is the different indexes and finally the type,
         # all of it separated by tabs
-        file_write.write("\t".join([f"i{i:+}" for i in range(-window_bkw, window_fwd + 1)] + ["Filter"]) + "\n")
+        file_write.write("\t".join([f"i{i:+}" for i in range(-window_bkw, window_fwd + 1)] + ["Filter", "Time"]) + "\n")
 
         for i, line in enumerate(lines):
             if i < window_bkw:
@@ -67,12 +78,8 @@ def process_file(file: str, window_bkw: int, window_fwd: int) -> None:
                 break
 
             window_lines = lines[i - window_bkw:i + window_fwd + 1]
-            window_times = []
-            for l in window_lines:
-                window_times.append(int(l.split()[0]))
-            feature_vector = get_feature_vector(beat_window=window_times,
-                                                beat_type=line.split()[1],
-                                                reference_beat=window_bkw)
+            feature_vector = [int(l.split()[0]) for l in window_lines] + line.split()[1:]
+            #feature_vector = get_feature_vector(beat_window=window_times, beat_type=line.split()[1],reference_beat=window_bkw)
             file_write.write("\t".join(str(feature) for feature in feature_vector) + "\n")
 
 
@@ -89,7 +96,8 @@ def main():
     parser.add_argument(
         "-w",
         "--window",
-        required=True,
+        #required=True,
+        default=1,
         type=int,
         help="Specify the window size this number will be the number of beats forward and the number of beat backwards "
              "to take into account to make the feature vector"
