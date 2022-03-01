@@ -2,7 +2,7 @@ window = 1
 num_centers = 6
 
 get_deltas_from_data <- function(data){
-  return(data[,1:(length(data)-2)])
+  return(data[,2:(length(data)-2)])
 }
 
 plot_colour_timestamp <- function(file, data) {
@@ -31,11 +31,43 @@ plot_colour_cluster <- function(file, data, num_centers) {
   plot(deltas, col=cl$cluster, pch=".", cex=3, main=title)
 }
 
+
 plot_colour_mcluster <- function(file, data) {
   library(mclust)
   deltas = get_deltas_from_data(data)
   cl = Mclust(deltas)
   plot(cl, what=c("classification"))
+  legend(x='topleft', title="CLUSTERS", box.lwd=1,legend=1:cl$G, fill=1:cl$G)
+  return(cl)
+}
+plot_colour_mcluster(file, data)
+
+
+milliseconds_to_string <- function( millisecs ) {
+  seconds = floor(millisecs/1000)
+  millisecs = millisecs%%1000
+  minutes = floor(seconds/60)
+  seconds = seconds%%60
+  return(paste(minutes, seconds, millisecs, sep=":"))
+}
+file = "./Anns/formatted/b1_f1/I02_ann.txt"
+data = read.table(file, header=TRUE)
+cl = plot_colour_mcluster(file, data)
+write_cl_report(paste(path, "I02_anns_cluster_report.txt", sep=""), data, cl)
+
+write_cl_report <- function(file_output, data, cl) {
+  for (i in 1:cl$G) {
+    rows_to_get = cl$classification==i
+    times = data.frame(data[rows_to_get, 1], 
+                       milliseconds_to_string(data[rows_to_get, length(data)]))
+    filter = data[cl$classification==i, length(data)-1]
+    write.table(paste("In cluster", i, "we found:\n\t", length(filter[filter==1]), " beats to filter and",
+                      length(filter[filter==0]), "normal filters out of", length(filter)
+                      , sep=" "), file=file_output, append = TRUE, sep="", row.names=FALSE,
+                col.names=F)
+    write.table(times, file=file_output, append=TRUE, sep="\t", row.names=FALSE,
+                col.names=F)
+  }
 }
 
 for ( i in 1:window ) {
@@ -68,12 +100,16 @@ for ( i in 1:window ) {
       #plot_colour_cluster(file, data, num_centers)
       
       #Mixture of cluster models
-      plot_colour_mcluster(file, data)
+      cl = plot_colour_mcluster(file, data)
+      cl$z
       
     }
   }
   dev.off()
 }
+
+
+
 
 # 5 Centers seemed to give me a good result.
 # 6 centers sometimes gave a nice result.
