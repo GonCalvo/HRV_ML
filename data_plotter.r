@@ -1,4 +1,10 @@
-window = 1
+# use tidyr
+install.packages("tidyr")
+install.packages("tidyverse")
+install.packages("GGally")
+library("tidyverse")
+library("GGally")
+window = 2
 num_centers = 6
 
 get_deltas_from_data <- function(data){
@@ -40,7 +46,6 @@ plot_colour_mcluster <- function(file, data) {
   legend(x='topleft', title="CLUSTERS", box.lwd=1,legend=1:cl$G, fill=1:cl$G)
   return(cl)
 }
-plot_colour_mcluster(file, data)
 
 
 milliseconds_to_string <- function( millisecs ) {
@@ -50,10 +55,38 @@ milliseconds_to_string <- function( millisecs ) {
   seconds = seconds%%60
   return(paste(minutes, seconds, millisecs, sep=":"))
 }
-file = "./Anns/formatted/b1_f1/I02_ann.txt"
+
+cluster_to_color <- function(cl){
+  # Only works for clusters generated with mclust, and up to 10 clusters
+  colours=c('black', 'red', 'blue', 'orange', 'yellow', 'purple', 'green', 
+            'magenta', 'plum', 'peru')
+  for( i in 1:cl$G ){
+    cl$classification<-replace(cl$classification, cl$classification==i, colours[i])
+  }
+}
+
+file = "./Anns/formatted/b3_f3/I01_ann.txt"
 data = read.table(file, header=TRUE)
+df = data.frame(data)
+df$Filter<-replace(df$Filter, df$Filter==1, 'Ventricular')
+df$Filter<-replace(df$Filter, df$Filter==0, 'Normal')
+ggplot(data,aes(i.0, i.1, col=index)) + geom_point()
+ggplot(data,aes(i.0, i.1, col=Filter)) + geom_point()
+ggplot(data,aes(i.1.1, i.0, col=Filter)) + geom_point()
+
+colours=c('black', 'red', 'blue', 'orange', 'yellow', 'purple', 'green', 
+          'magenta', 'plum')
+for( i in 1:cl$G ){
+  cl$classification<-replace(cl$classification, cl$classification==i, colours[i])
+}
+
+
+cluster_colours <- cluster_to_colour( cl )
+ggpairs(df, columns=c(2:4), aes(color=cl$Classification), switch='both')
+ggpairs(df, columns=c(2:4), aes(color=cl$classification), switch='both')
+
 cl = plot_colour_mcluster(file, data)
-write_cl_report(paste(path, "I02_anns_cluster_report.txt", sep=""), data, cl)
+write_cl_report(paste(path, "I01_anns_cluster_report.txt", sep=""), data, cl)
 
 write_cl_report <- function(file_output, data, cl) {
   for (i in 1:cl$G) {
@@ -70,7 +103,8 @@ write_cl_report <- function(file_output, data, cl) {
   }
 }
 
-for ( i in 1:window ) {
+
+for ( i in 2:window ) {
   path = paste("./Anns/formatted/b", i, "_f", i, "/", sep="")
   print(paste("Working on directory:", path))
   
@@ -101,7 +135,7 @@ for ( i in 1:window ) {
       
       #Mixture of cluster models
       cl = plot_colour_mcluster(file, data)
-      cl$z
+      #cl$z
       
     }
   }

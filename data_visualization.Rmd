@@ -1,0 +1,148 @@
+---
+title: "BeatDeltaTimer"
+author: "Gonzalo Calvo"
+date: '2022-03-06'
+output: 
+  html_document:
+    fig_caption: yes
+    theme: lumen
+    toc: yes
+---
+<style type="text/css">
+.main-container {
+  max-width: 1800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+
+```{r setup, include=FALSE}
+library(knitr)
+library(rgl)
+library(GGally)
+knit_hooks$set(webgl = hook_webgl)
+
+cluster_to_colour <- function(df){
+  # Only works for clusters generated with mclust, and up to 10 clusters
+  colours=c('black', 'red', 'blue', 'orange', 'yellow', 'purple', 'green', 
+            'magenta', 'plum', 'peru')
+  for( i in 1:df$G ){
+    df$classification<-replace(df$classification, df$classification==i, colours[i])
+  }
+  return(df)
+}
+
+get_deltas_from_data <- function(data){
+  return(data[,2:(length(data)-2)])
+}
+
+plot_colour_timestamp <- function(file, data) {
+  timepos = data$Time
+  gray_scale = grey((timepos-min(timepos))/(max(timepos)-min(timepos)))
+  par(bg="red3")
+  
+  deltas = get_deltas_from_data(data)
+  
+  title = paste(file, "Coloured by timestamp",sep=" ")
+  plot(deltas, col=gray_scale, pch=".", cex=3, main=title)
+}
+
+
+plot_colour_filter <- function(file, data) {
+  title = paste(file, "Coloured by filter",sep=" ")
+  deltas = get_deltas_from_data(data)
+  plot(deltas, col=data$Filter+1, pch=".", cex=3, main=title)
+}
+
+
+plot_colour_cluster <- function(file, data, num_centers) {
+  deltas = get_deltas_from_data(data)
+  cl = kmeans(deltas, centers=num_centers)
+  title = paste(file, "_", num_centers, "cluster")
+  plot(deltas, col=cl$cluster, pch=".", cex=3, main=title)
+}
+
+
+plot_colour_mcluster <- function(file, data) {
+  library(mclust)
+  deltas = get_deltas_from_data(data)
+  cl = Mclust(deltas, G=1:15)
+  
+  df = data.frame(data)
+  df$Filter<-replace(df$Filter, df$Filter==1, 'Ventricular')
+  df$Filter<-replace(df$Filter, df$Filter==0, 'Normal')
+  
+  #cluster_colours <- cluster_to_colour( cl )
+  #ggpairs(df, columns=c(2:4), aes(color=cluster_colours$Classification), switch='both')
+  
+  #ggplot(data, aes(i.0, i.1, color=cl$classification)) + geom_point()
+  plot(cl, what=c('classification'))
+  legend(x='center', title="CLUSTERS", box.lwd=1,legend=1:cl$G, fill=1:cl$G)
+  
+  return(cl)
+}
+
+
+milliseconds_to_string <- function( millisecs ) {
+  seconds = floor(millisecs/1000)
+  millisecs = millisecs%%1000
+  minutes = floor(seconds/60)
+  seconds = seconds%%60
+  return(paste(minutes, seconds, millisecs, sep=":"))
+}
+
+write_cl_report <- function(data, cl) {
+  for (i in 1:cl$G) {
+    rows_to_get = cl$classification==i
+    times = data.frame(data[rows_to_get, 1], 
+                       milliseconds_to_string(data[rows_to_get, length(data)]))
+    filter = data[cl$classification==i, length(data)-1]
+    m_i_1 = mean(data[cl$classification==i, 2])
+    m_i_0 = mean(data[cl$classification==i, 3])
+    m_i1 = mean(data[cl$classification==i, 4])
+    print(paste("In cluster", i, "we found:", length(filter[filter==1]), " beats to filter and",length(filter[filter==0]), "normal filters out of", length(filter), 
+                " with means: i.1=", m_i_1,", i0=", m_i_0, ", i.1.1=", m_i1, sep=" "))
+  }
+
+}
+```
+
+
+
+# Visualization for windows of size 1 forward and backwards
+
+```{r test, echo=TRUE}
+window_fwd = 1
+window_bwd = 1
+file_num = "01"
+
+file = paste("I",file_num, "_ann.txt", sep="")
+path = paste("./Anns/formatted/b",window_bwd, "_f", window_fwd, "/", sep="" )
+
+data = read.table(paste(path, file, sep=""), header=TRUE)
+plot_colour_filter(file, data)
+```
+
+
+```{r clusters, fig.height = 12, fig.width = 12}
+cl = plot_colour_mcluster(file, data)
+```
+
+
+```{r cl_report}
+write_cl_report(data, cl)
+```
+
+
+## Data coloured by Filter
+
+```{r data_filter, webgl = hook_webgl}
+plot3d( data[,2:4], col = data[,5]+1 )
+```
+
+# Data coloured by Classification
+
+```{r data_classification, webgl = hook_webgl}
+plot3d( data[,2:4], col = cl$classification )
+```
