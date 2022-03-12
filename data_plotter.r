@@ -4,7 +4,17 @@ install.packages("tidyverse")
 install.packages("GGally")
 library("tidyverse")
 library("GGally")
-window = 2
+
+generate_PDF = F
+plot_filter = F
+plot_cluster = F
+plot_mcluster = F
+generate_COR = T
+write_cluster_report = F
+
+window = 5
+
+
 num_centers = 6
 
 get_deltas_from_data <- function(data){
@@ -65,35 +75,21 @@ cluster_to_color <- function(cl){
   }
 }
 
-file = "./Anns/formatted/b3_f3/I01_ann.txt"
-data = read.table(file, header=TRUE)
-df = data.frame(data)
-df$Filter<-replace(df$Filter, df$Filter==1, 'Ventricular')
-df$Filter<-replace(df$Filter, df$Filter==0, 'Normal')
-ggplot(data,aes(i.0, i.1, col=index)) + geom_point()
-ggplot(data,aes(i.0, i.1, col=Filter)) + geom_point()
-ggplot(data,aes(i.1.1, i.0, col=Filter)) + geom_point()
-
-colours=c('black', 'red', 'blue', 'orange', 'yellow', 'purple', 'green', 
-          'magenta', 'plum')
-for( i in 1:cl$G ){
-  cl$classification<-replace(cl$classification, cl$classification==i, colours[i])
-}
-
-
-cluster_colours <- cluster_to_colour( cl )
-ggpairs(df, columns=c(2:4), aes(color=cl$Classification), switch='both')
-ggpairs(df, columns=c(2:4), aes(color=cl$classification), switch='both')
-
-cl = plot_colour_mcluster(file, data)
-write_cl_report(paste(path, "I01_anns_cluster_report.txt", sep=""), data, cl)
-
-write_cl_report <- function(file_output, data, cl) {
+write_cl_report <- function(path, file, data, cl) {
+  #First we make sure the Cluster_Reports directory exists
+  path = paste(path, "/Cluster_Reports/")
+  if ( !file.exists(path)) dir.create(path)
+  
+  # Then we make sure the file doesn't exist yet, otherwise we delete it
+  file_output = paste(path, file_output, "_cluster_report.txt", sep="")
+  if ( file.exists(file_output)) file.remove(file_output)
+  
   for (i in 1:cl$G) {
     rows_to_get = cl$classification==i
     times = data.frame(data[rows_to_get, 1], 
                        milliseconds_to_string(data[rows_to_get, length(data)]))
     filter = data[cl$classification==i, length(data)-1]
+    
     write.table(paste("In cluster", i, "we found:\n\t", length(filter[filter==1]), " beats to filter and",
                       length(filter[filter==0]), "normal filters out of", length(filter)
                       , sep=" "), file=file_output, append = TRUE, sep="", row.names=FALSE,
@@ -103,43 +99,64 @@ write_cl_report <- function(file_output, data, cl) {
   }
 }
 
+write_cor_report <- function(path, cor_report, file_name, data ) {
+  #First we make sure the Correlation_Report directory exists
+  path = paste(path, "Correlation_Report/")
+  if ( !file.exists(path)) dir.create(path)
+  
+  file_output = paste(path, cor_report, sep="")
+  if ( !file.exists(file_output)) file.create(file_output)
+  
+  deltas <- get_deltas_from_data(data)
+  
+  cat( c(paste("Correlation for file ", file_name)) ,file=file_output, sep="\n",append=TRUE)
+  
+  write.table(cor(deltas), file=file_output, append = TRUE, sep=";")
+}
 
-for ( i in 2:window ) {
+for ( i in 1:window ) {
   path = paste("./Anns/formatted/b", i, "_f", i, "/", sep="")
   print(paste("Working on directory:", path))
   
   files = list.files(path)
   
-  destination = paste("plots_b", i, "_f", i, ".pdf", sep="")
-  pdf(file=paste(path,destination, sep=""), title=destination)
-  par(mfrow = c(2,2))
-  print(paste("Saving to file: ", destination))
+  if ( generate_PDF ) {
+    destination = paste("plots_b", i, "_f", i, ".pdf", sep="")
+    pdf(file=paste(path,destination, sep=""), title=destination)
+    print(paste("Saving to file: ", destination))
+  }
   
-  for ( file in files ) {
-    if (endsWith(file, ".txt")) {
-      print(paste("Workign on file: ", file))
-      data = read.table(paste(path, file, sep=""), header=TRUE)
-      
-      #calculate correlation.
-      #correlation = cor(deltas)
-      #print(correlation)
+  for ( f in files ) {
+    if (endsWith(f, ".txt")) {
+      print(paste("Workign on file: ", f))
+      data = read.table(paste(path, f, sep=""), header=TRUE)
       
       #Plot deltas, marking which should be filtered
-      plot_colour_filter(file, data)
+      if ( plot_filter ) plot_colour_filter(f, data)
       
       #Plot deltas, indicating with the colour the approx timestamp
-      #plot_colour_timestamp(file, data)
+      #plot_colour_timestamp(f, data)
       
       #Plot deltas coloured by cluster
-      #plot_colour_cluster(file, data, num_centers)
+      if ( plot_cluster ) plot_colour_cluster(f, data, num_centers)
       
       #Mixture of cluster models
-      cl = plot_colour_mcluster(file, data)
-      #cl$z
+      if ( plot_mcluster ) cl = plot_colour_mcluster(f, data)
+      
+      if ( write_cluster_report ) write_cl_report(path, substr(f, 0, nchar(f)-4), data, cl)
+      
+      if ( generate_COR ) {
+        write_cor_report(path, "Cor_report.csv", substr(f, 0, nchar(f)-4), data)
+        write_cor_report(path, "Cor_report_filtered.csv", substr(f, 0, nchar(f)-4), data[data$Filter==1,])
+        write_cor_report(path, "Cor_report_non_filtered.csv", substr(f, 0, nchar(f)-4), data[data$Filter==0,])
+      }
+      
+      
+      
       
     }
   }
-  dev.off()
+  if ( generate_PDF ) dev.off()
 }
 
 
