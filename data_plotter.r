@@ -15,8 +15,6 @@ write_cluster_report = F
 window = 5
 
 
-num_centers = 6
-
 get_deltas_from_data <- function(data){
   return(data[,2:(length(data)-2)])
 }
@@ -111,10 +109,13 @@ write_cor_report <- function(path, cor_report, file_name, data ) {
   
   cat( c(paste("Correlation for file ", file_name)) ,file=file_output, sep="\n",append=TRUE)
   
-  write.table(cor(deltas), file=file_output, append = TRUE, sep=";")
+  # This is here to adjust the columns names tot he right columns.
+  cat( "-," ,file=file_output, sep="",append=TRUE)
+  
+  write.table(cor(deltas), file=file_output, append = TRUE, sep=",")
 }
 
-for ( i in 1:window ) {
+for ( i in 5:window ) {
   path = paste("./Anns/formatted/b", i, "_f", i, "/", sep="")
   print(paste("Working on directory:", path))
   
@@ -150,10 +151,6 @@ for ( i in 1:window ) {
         write_cor_report(path, "Cor_report_filtered.csv", substr(f, 0, nchar(f)-4), data[data$Filter==1,])
         write_cor_report(path, "Cor_report_non_filtered.csv", substr(f, 0, nchar(f)-4), data[data$Filter==0,])
       }
-      
-      
-      
-      
     }
   }
   if ( generate_PDF ) dev.off()
@@ -161,6 +158,7 @@ for ( i in 1:window ) {
 
 
 
+## LEGACY CODE; NOT USED
 
 # 5 Centers seemed to give me a good result.
 # 6 centers sometimes gave a nice result.
