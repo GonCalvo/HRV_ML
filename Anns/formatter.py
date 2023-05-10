@@ -17,10 +17,12 @@ def format_file(file: str) -> dict:
     file_write_name = SUBFOLDER + "/" + file[:-4] + ".txt"
     with open(file) as file_read, open_if(file_write_name, not os.path.isfile(file_write_name), "x") as file_write:
         prev_time = 0
-        # get rid of the header
+        # get rid of the header and first record
+        lines = file_read.readlines()[2:]
         possible_types = {}
-        file_read.readline()
-        for line in file_read:
+        prev_instance_was_ventricular = False
+        for line in lines:
+
             data = line.split()
 
             time = data[0]
@@ -31,10 +33,6 @@ def format_file(file: str) -> dict:
             time_delta = milliseconds - prev_time
             prev_time = milliseconds
 
-            # Removing some outliers caused on the first beat happening too early
-            if milliseconds < 150:
-                continue
-
             # data[2] is the type
             type = data[2]
             if type in possible_types:
@@ -42,13 +40,23 @@ def format_file(file: str) -> dict:
             else:
                 possible_types[type] = 1
 
-            # Should be true and false, but for easier cross-language, will use 1 and 0
+
             should_be_filtered = 1
-            if type in IMPORTANT_TYPES:
+            if prev_instance_was_ventricular:
+                # Now it can be another ventricular or normal
+                if type in IMPORTANT_TYPES:
+                    should_be_filtered = 2 # This is a normal beat a ventricular beat
+                    prev_instance_was_ventricular = False
+                else:
+                    should_be_filtered = 3 # Ventricular beat after ventricular beat
+            elif type in IMPORTANT_TYPES:
                 should_be_filtered = 0
+                prev_instance_was_ventricular = False
+            else:
+                prev_instance_was_ventricular = True
 
             if file_write is not None:
-                file_write.write(f"{time_delta}\t{should_be_filtered}\t{milliseconds}\n")
+                file_write.write(f"{time_delta}\t{should_be_filtered}\n")
 
     print(f"\tTypes found in file \"{file}\": {possible_types}")
     return possible_types
@@ -83,12 +91,6 @@ def main():
                 for file in types[t]:
                     fw.write(f"\t\tFound {types[t][file]} times in file \'{file}\'\n")
 
-
-'''
-def main():
-    files = os.listdir(os.getcwd())
-    format_file(files[5])
-'''
 
 if __name__ == "__main__":
     main()

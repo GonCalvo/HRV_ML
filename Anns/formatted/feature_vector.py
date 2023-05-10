@@ -69,7 +69,7 @@ def process_file(file: str, window_bkw: int, window_fwd: int) -> None:
 
         # Next line writes the header, as i+n where n is the different indexes and finally the type,
         # all of it separated by tabs
-        file_write.write("\t".join(["index"]+[f"i{i:+}" for i in range(-window_bkw, window_fwd + 1)] + ["Filter", "Time"]) + "\n")
+        file_write.write("\t".join([f"i{i:+}" for i in range(-window_bkw, window_fwd + 1)] + ["Filter"]) + "\n")
 
         for i, line in enumerate(lines):
             if i < window_bkw:
@@ -78,7 +78,7 @@ def process_file(file: str, window_bkw: int, window_fwd: int) -> None:
                 break
 
             window_lines = lines[i - window_bkw:i + window_fwd + 1]
-            feature_vector = [i]+[int(l.split()[0]) for l in window_lines] + line.split()[1:]
+            feature_vector = [int(l.split()[0]) for l in window_lines] + line.split()[1:]
             #feature_vector = get_feature_vector(beat_window=window_times, beat_type=line.split()[1],reference_beat=window_bkw)
             file_write.write("\t".join(str(feature) for feature in feature_vector) + "\n")
 
