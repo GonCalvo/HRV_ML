@@ -285,7 +285,7 @@ MM_cross_validation <- function( file, data, times=5 ){
 }
 
 # Doesn't really require cross validation
-DB_cross_validation <- function( file, data, eps = 0.10, MinPts = 3){
+DB_cross_validation <- function( file, data, eps = 0.10, MinPts = 3, times = 5){
   deltas = get_deltas_from_data(data)
   normalized_deltas = min_max_norm(deltas)
   purities = c()
@@ -293,13 +293,15 @@ DB_cross_validation <- function( file, data, eps = 0.10, MinPts = 3){
   sensitivities = c()
   specificities = c()
   clusters = c()
-  ds_db = dbscan(normalized_deltas, eps=eps,MinPts = MinPts)
-  purities = append(purities, get_model_purity(ds_db$cluster, data))
-  confusion_matrix = get_model_confusion_matrix(ds_db$cluster, data)
-  accuracies = append(accuracies, get_model_accuracy(confusion_matrix))
-  sensitivities = append(sensitivities, get_model_sensitivity(confusion_matrix))
-  specificities = append(specificities, get_model_specificity(confusion_matrix))
-  clusters = append(clusters, max(ds_db$cluster)+1)
+  for(test in 1:times){
+    ds_db = dbscan(normalized_deltas, eps=eps,MinPts = MinPts)
+    purities = append(purities, get_model_purity(ds_db$cluster, data))
+    confusion_matrix = get_model_confusion_matrix(ds_db$cluster, data)
+    accuracies = append(accuracies, get_model_accuracy(confusion_matrix))
+    sensitivities = append(sensitivities, get_model_sensitivity(confusion_matrix))
+    specificities = append(specificities, get_model_specificity(confusion_matrix))
+    clusters = append(clusters, max(ds_db$cluster)+1)
+  }
   scores = data.frame(  purity = purities,
                         accuracy = accuracies,
                         sensitivity = sensitivities,
@@ -309,19 +311,21 @@ DB_cross_validation <- function( file, data, eps = 0.10, MinPts = 3){
   return(scores)
 }
 
-HDB_cross_validation <- function( file, data, minPts = 3){
+HDB_cross_validation <- function( file, data, minPts = 3, times=5){
   deltas = get_deltas_from_data(data)
   normalized_deltas = min_max_norm(deltas)
   purities = c()
   accuracies = c()
   sensitivities = c()
   specificities = c()
-  ds_db = hdbscan(normalized_deltas, minPts = minPts)
-  purities = append(purities, get_model_purity(ds_db$cluster, data))
-  confusion_matrix = get_model_confusion_matrix(ds_db$cluster, data)
-  accuracies = append(accuracies, get_model_accuracy(confusion_matrix))
-  sensitivities = append(sensitivities, get_model_sensitivity(confusion_matrix))
-  specificities = append(specificities, get_model_specificity(confusion_matrix))
+  for(test in 1:times){
+    ds_db = hdbscan(normalized_deltas, minPts = minPts)
+    purities = append(purities, get_model_purity(ds_db$cluster, data))
+    confusion_matrix = get_model_confusion_matrix(ds_db$cluster, data)
+    accuracies = append(accuracies, get_model_accuracy(confusion_matrix))
+    sensitivities = append(sensitivities, get_model_sensitivity(confusion_matrix))
+    specificities = append(specificities, get_model_specificity(confusion_matrix))
+  }
   scores = data.frame(  purity = purities,
                         accuracy = accuracies,
                         sensitivity = sensitivities,
@@ -403,9 +407,13 @@ for ( i in 1:1 ) {
     file_output = paste(path, "Clustering_report.csv", sep="")
     if ( file.exists(file_output)) file.remove(file_output)
     
-    models <- c("KNN_5", "KNN_7", "KNN_9", "MM", "DB_0.1_3", "DB_0.05_5", "DB_0.01_5", "HDB_5", "KMENOIDS_5",  "KMENOIDS_7",  "KMENOIDS_9")
+    models <- c("KNN_5", "KNN_7", "KNN_9", "MM", "DB_0.1_3", "DB_0.1_5", "DB_0.05_5", "DB_0.07_5", "HDB_5", "KMENOIDS_5",  "KMENOIDS_7",  "KMENOIDS_9")
+    #models <- c("KNN_5", "KNN_7", "KNN_9")
     overall_values <- list(1) # we have to declare it and fill it.
-    
+    for ( model in models){
+      
+      overall_values[[model]] <- list()
+    }
   }
   
   
@@ -476,7 +484,6 @@ for ( i in 1:1 ) {
       if ( write_cluster_report ) {
         total_scores <- data.frame(row.names = models)
         for( model in models ){
-          overall_values[[model]] <- list()
           print(paste("applying model:", model))
           if ( startsWith(model, "KNN") ){
             num = as.numeric(strsplit(model, "_")[[1]][2])
@@ -503,7 +510,7 @@ for ( i in 1:1 ) {
           total_scores[model, "purity_mean"] = purity_mean
           total_scores[model, "purity_sd"] = purity_sd
           if(is.null(overall_values[[model]][["purity_mean"]])){
-            overall_values[[model]][["purity_mean"]] <- list(purity_mean)
+            overall_values[[model]][["purity_mean"]] <- c(purity_mean)
           }else{
             #l <- length(overall_values[[model]][["purity_mean"]])+1
             #overall_values[[model]][["purity_mean"]][[l]] <- purity_mean
@@ -607,8 +614,8 @@ for ( i in 1:1 ) {
       overall_scores[model, "specificity_mean"] = mean(overall_values[[model]][["specificity_mean"]])
       overall_scores[model, "specificity_sd"] = sd(overall_values[[model]][["specificity_mean"]])
       
-      overall_scores[model, "sensitivity_mean"] = mean(overall_values[[model]][["sensitivity_mean"]])
-      overall_scores[model, "sensitivity_sd"] = sd(overall_values[[model]][["sensitivity_mean"]])
+      overall_scores[model, "sensitivities_mean"] = mean(overall_values[[model]][["sensitivities_mean"]])
+      overall_scores[model, "sensitivity_sd"] = sd(overall_values[[model]][["sensitivities_mean"]])
       
       overall_scores[model, "clusters_mean"] = mean(overall_values[[model]][["clusters_mean"]])
       overall_scores[model, "clusters_sd"] = sd(overall_values[[model]][["clusters_mean"]])
