@@ -19,6 +19,7 @@ generate_PDF_per_file = F
 plot_filter = F
 plot_cluster = F
 plot_mcluster = F
+plot_BIC = F
 generate_COR = F
 generate_COR_ALL = F
 write_cluster_report = T
@@ -60,8 +61,10 @@ plot_colour_filter <- function(file, data) {
   deltas = get_deltas_from_data(data)
   normalized_deltas = min_max_norm(deltas)
   file = substring(file, 1, 3)
-  # png(paste("All_data_plots/plots/", file,"_4_colours.png", sep = ""),width=800,height=800)
-  plot(normalized_deltas, col=data$Filter+1, pch=".", cex=3, main=paste(f, "coloured by filter"))
+  png(paste("All_data_plots/plots/", file,"_4_colours.png", sep = ""),width=800,height=800)
+  main = paste(f, "coloured by filter")
+  plot(normalized_deltas, col=data$Filter+1, pch=".", cex=3, var.labels=c("i-1", "i", "i+1"))
+  dev.off()
 }
 
 
@@ -268,7 +271,7 @@ MM_cross_validation <- function( file, data, times=5 ){
   specificities = c()
   clusters = c()
   for(test in 1:times){
-    cl = Mclust(normalized_deltas)
+    cl = Mclust(normalized_deltas, G=1:20)
     purities = append(purities, get_model_purity(cl$classification, data))
     confusion_matrix = get_model_confusion_matrix(cl$classification, data)
     accuracies = append(accuracies, get_model_accuracy(confusion_matrix))
@@ -407,18 +410,41 @@ for ( i in 1:1 ) {
     file_output = paste(path, "Clustering_report.csv", sep="")
     if ( file.exists(file_output)) file.remove(file_output)
     
-    models <- c("KNN_5", "KNN_7", "KNN_9", "MM", "DB_0.1_3", "DB_0.1_5", "DB_0.05_5", "DB_0.07_5", "HDB_5", "KMENOIDS_5",  "KMENOIDS_7",  "KMENOIDS_9")
+    models <- c()
+    for( j in 5:10 ){
+      models <- append(models, paste("KMeans", j, sep="_"))
+    }
+    
+    for( j in 5:10 ){
+      models <- append(models, paste("KMENOIDS", j, sep="_"))
+    }
+    
+    for( min_pts in 3:6 ){
+      for( eps in seq(0.04, 0.1, by=0.01)){
+        models <- append(models, paste("DB", eps, min_pts, sep="_"))
+      }
+    }
+    
+    for( j in 3:10 ){
+      models <- append(models, paste("HDB", j, sep="_"))
+    }
+    
+    models <- append(models, "MM")
+    
+    #models <- c("KNN_5", "KNN_7", "KNN_9", "MM", "DB_0.1_3", "DB_0.1_5", "DB_0.05_5", "DB_0.07_5", "HDB_5", "KMENOIDS_5",  "KMENOIDS_7",  "KMENOIDS_9")
     #models <- c("KNN_5", "KNN_7", "KNN_9")
     overall_values <- list(1) # we have to declare it and fill it.
     for ( model in models){
       
       overall_values[[model]] <- list()
     }
+    print(paste("Models to be evaluated: ", paste(models, sep=",")))
   }
   
   
   if ( generate_PDF ) {
-    destination = paste("plots_b", i, "_f", i, ".pdf", sep="")
+    #destination = paste("plots_b", i, "_f", i, ".pdf", sep="")
+    destination = "BICs.pdf"
     pdf(file=paste(path,destination, sep=""), title=destination)
     print(paste("Saving to file: ", destination))
   }
@@ -473,6 +499,12 @@ for ( i in 1:1 ) {
         print_model_stats(cl, data)
       }
       
+      if (plot_BIC){
+        cl = plot_colour_mcluster(f, normalized_deltas)
+        plot(cl$BIC)
+        title(f)
+      }
+      
       # Density Based clustering
       if ( plot_dbcluster ) {
         db = plot_colour_dbcluster(f, normalized_deltas)
@@ -485,7 +517,7 @@ for ( i in 1:1 ) {
         total_scores <- data.frame(row.names = models)
         for( model in models ){
           print(paste("applying model:", model))
-          if ( startsWith(model, "KNN") ){
+          if ( startsWith(model, "KMeans") ){
             num = as.numeric(strsplit(model, "_")[[1]][2])
             scores = KNN_cross_validation(f, data, num_centers = num)
           } else if (startsWith(model, "DB") ){
@@ -504,7 +536,7 @@ for ( i in 1:1 ) {
             num_centers = as.numeric(model_data[2])
             scores = KMENOIDS_cross_validation(f, data, num_centers )
           }
-
+          
           purity_mean = mean(scores$purity)
           purity_sd = sd(scores$purity)
           total_scores[model, "purity_mean"] = purity_mean
@@ -622,7 +654,7 @@ for ( i in 1:1 ) {
       
       
     }
-                            
+    
     cat( c(paste("Clustering results overall")) ,file=file_output, sep="\n",append=TRUE)
     cat( "-," ,file=file_output, sep="",append=TRUE)
     write.table(overall_scores, file=file_output, append = TRUE, sep=",")
