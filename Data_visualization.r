@@ -12,7 +12,7 @@ library(cluster)
 #                 Parameters definition                              =
 #=====================================================================
 
-generate_PDF = F
+generate_PDF = T
 
 generate_PDF_per_file = F
 
@@ -28,6 +28,7 @@ plot_dbcluster = F
 plot_histogram = F
 
 window = 1
+MM_G = 20
 
 #=====================================================================
 #                 Functions definition                               =
@@ -79,7 +80,7 @@ plot_colour_cluster <- function(file, normalized_deltas, num_centers) {
 
 # Mixture of models
 plot_colour_mcluster <- function(file, normalized_deltas) {
-  cl = Mclust(normalized_deltas)
+  cl = Mclust(normalized_deltas, G=1:MM_G)
   plot(cl, what=c("classification"), main=paste(file, "_MixtureOfModels", sep=""))
   #legend(x='topleft', title="CLUSTERS", box.lwd=1,legend=1:cl$G, fill=1:cl$G)
   return(cl)
@@ -179,6 +180,30 @@ get_model_confusion_matrix <- function(classifiers, data){
   total_combinations = choose(length(data$i.1), 2)
   true_positives = 0
   true_negatives = 0
+  false_positives = 0
+  false_negatives = 0
+  for (cluster in 1:max(classifiers)){
+    delta_class_in_this_cluster = data[classifiers == cluster, (length(data))]
+    to_filter = length(which(!(delta_class_in_this_cluster == 0)))
+    to_keep = length(which(delta_class_in_this_cluster == 0))
+    if ( to_filter > to_keep ){
+      true_positives = true_positives + to_filter
+      false_positives = false_positives + to_keep
+    } else {
+      true_negatives = true_negatives + to_keep
+      false_negatives = false_negatives + to_filter
+    }
+  }
+  confusion_matrix = matrix(nrow=2, ncol=2, data = c(true_positives,false_positives, false_negatives, true_negatives))
+  
+  return(confusion_matrix)
+}
+
+
+get_model_RI_confusion_matrix <- function(classifiers, data){
+  total_combinations = choose(length(data$i.1), 2)
+  true_positives = 0
+  true_negatives = 0
   total_to_filters = length(which(!(data[,length(data)] == 0)))
   total_to_keep = length(which((data[,length(data)] == 0)))
   cluster_combinations = 0
@@ -214,6 +239,7 @@ get_model_accuracy <- function(confusion_matrix){
 get_model_sensitivity <- function(confusion_matrix){
   TP = confusion_matrix[1,1]
   FN = confusion_matrix[1,2]
+  if (TP == 0 && FN == 0) return(0)
   return(TP/(FN+TP))
   
 }
@@ -222,6 +248,7 @@ get_model_sensitivity <- function(confusion_matrix){
 get_model_specificity <- function(confusion_matrix){
   FP = confusion_matrix[2,1]
   TN = confusion_matrix[2,2]
+  if (FP == 0 && TN == 0) return(0)
   return(TN/(FP+TN))
 }
 
@@ -239,7 +266,7 @@ print_model_stats <- function(model, data) {
   print(paste("\tSpecificity: ", specificity))
 }
 
-KNN_cross_validation <- function( file, data, num_centers, times=5 ){
+Kmeans_cross_validation <- function( file, data, num_centers, times=5 ){
   deltas = get_deltas_from_data(data)
   normalized_deltas = min_max_norm(deltas)
   purities = c()
@@ -271,7 +298,7 @@ MM_cross_validation <- function( file, data, times=5 ){
   specificities = c()
   clusters = c()
   for(test in 1:times){
-    cl = Mclust(normalized_deltas, G=1:20)
+    cl = Mclust(normalized_deltas, G=1:MM_G)
     purities = append(purities, get_model_purity(cl$classification, data))
     confusion_matrix = get_model_confusion_matrix(cl$classification, data)
     accuracies = append(accuracies, get_model_accuracy(confusion_matrix))
@@ -288,7 +315,7 @@ MM_cross_validation <- function( file, data, times=5 ){
 }
 
 # Doesn't really require cross validation
-DB_cross_validation <- function( file, data, eps = 0.10, MinPts = 3, times = 5){
+DB_cross_validation <- function( file, data, eps = 0.10, MinPts = 3){
   deltas = get_deltas_from_data(data)
   normalized_deltas = min_max_norm(deltas)
   purities = c()
@@ -296,15 +323,13 @@ DB_cross_validation <- function( file, data, eps = 0.10, MinPts = 3, times = 5){
   sensitivities = c()
   specificities = c()
   clusters = c()
-  for(test in 1:times){
-    ds_db = dbscan(normalized_deltas, eps=eps,MinPts = MinPts)
-    purities = append(purities, get_model_purity(ds_db$cluster, data))
-    confusion_matrix = get_model_confusion_matrix(ds_db$cluster, data)
-    accuracies = append(accuracies, get_model_accuracy(confusion_matrix))
-    sensitivities = append(sensitivities, get_model_sensitivity(confusion_matrix))
-    specificities = append(specificities, get_model_specificity(confusion_matrix))
-    clusters = append(clusters, max(ds_db$cluster)+1)
-  }
+  ds_db = dbscan(normalized_deltas, eps=eps,MinPts = MinPts)
+  purities = append(purities, get_model_purity(ds_db$cluster, data))
+  confusion_matrix = get_model_confusion_matrix(ds_db$cluster, data)
+  accuracies = append(accuracies, get_model_accuracy(confusion_matrix))
+  sensitivities = append(sensitivities, get_model_sensitivity(confusion_matrix))
+  specificities = append(specificities, get_model_specificity(confusion_matrix))
+  clusters = append(clusters, max(ds_db$cluster)+1)
   scores = data.frame(  purity = purities,
                         accuracy = accuracies,
                         sensitivity = sensitivities,
@@ -314,21 +339,19 @@ DB_cross_validation <- function( file, data, eps = 0.10, MinPts = 3, times = 5){
   return(scores)
 }
 
-HDB_cross_validation <- function( file, data, minPts = 3, times=5){
+HDB_cross_validation <- function( file, data, minPts = 3){
   deltas = get_deltas_from_data(data)
   normalized_deltas = min_max_norm(deltas)
   purities = c()
   accuracies = c()
   sensitivities = c()
   specificities = c()
-  for(test in 1:times){
-    ds_db = hdbscan(normalized_deltas, minPts = minPts)
-    purities = append(purities, get_model_purity(ds_db$cluster, data))
-    confusion_matrix = get_model_confusion_matrix(ds_db$cluster, data)
-    accuracies = append(accuracies, get_model_accuracy(confusion_matrix))
-    sensitivities = append(sensitivities, get_model_sensitivity(confusion_matrix))
-    specificities = append(specificities, get_model_specificity(confusion_matrix))
-  }
+  ds_db = hdbscan(normalized_deltas, minPts = minPts)
+  purities = append(purities, get_model_purity(ds_db$cluster, data))
+  confusion_matrix = get_model_confusion_matrix(ds_db$cluster, data)
+  accuracies = append(accuracies, get_model_accuracy(confusion_matrix))
+  sensitivities = append(sensitivities, get_model_sensitivity(confusion_matrix))
+  specificities = append(specificities, get_model_specificity(confusion_matrix))
   scores = data.frame(  purity = purities,
                         accuracy = accuracies,
                         sensitivity = sensitivities,
@@ -339,7 +362,7 @@ HDB_cross_validation <- function( file, data, minPts = 3, times=5){
 }
 
 
-KMENOIDS_cross_validation <- function ( file, data, num_centers=8, times = 5){
+KMENOIDS_cross_validation <- function ( file, data, num_centers=8){
   deltas = get_deltas_from_data(data)
   normalized_deltas = min_max_norm(deltas)
   
@@ -348,15 +371,12 @@ KMENOIDS_cross_validation <- function ( file, data, num_centers=8, times = 5){
   sensitivities = c()
   specificities = c()
   
-  for(test in 1:times){
-    cl = pam(normalized_deltas, num_centers)
-    confusion_matrix = get_model_confusion_matrix(cl$clustering, data)
-    accuracies = append(accuracies, get_model_accuracy(confusion_matrix))
-    sensitivities = append(sensitivities, get_model_sensitivity(confusion_matrix))
-    specificities = append(specificities, get_model_specificity(confusion_matrix))
-    purities = append(purities, get_model_purity(cl$cluster, data))
-  }
-  
+  cl = pam(normalized_deltas, num_centers)
+  confusion_matrix = get_model_confusion_matrix(cl$clustering, data)
+  accuracies = append(accuracies, get_model_accuracy(confusion_matrix))
+  sensitivities = append(sensitivities, get_model_sensitivity(confusion_matrix))
+  specificities = append(specificities, get_model_specificity(confusion_matrix))
+  purities = append(purities, get_model_purity(cl$cluster, data))
   
   scores = data.frame(  purity = purities,
                         accuracy = accuracies,
@@ -365,6 +385,52 @@ KMENOIDS_cross_validation <- function ( file, data, num_centers=8, times = 5){
                         clusters = c(max(cl$clustering)+1))
   
   return(scores)
+}
+
+derivate <- function(signal){
+  deriv = c()
+  for( i in 2: length(signal)){
+    deriv = append(deriv, (signal[i] - signal[i-1]))
+  }
+  
+  return(append(c(0), deriv))
+}
+
+
+adaptative_DB <- function( file, data, min_pts ) {
+  library(proxy)
+  
+  deltas = get_deltas_from_data(data)
+  normalized_deltas = min_max_norm(deltas)
+  purities = c()
+  accuracies = c()
+  sensitivities = c()
+  specificities = c()
+  
+  len = nrow(deltas)
+  distances <- as.matrix(dist(normalized_deltas))
+  min_distances = c()
+  for( i in 1:len ){
+    if(i == len ) i = i-1
+    min_distances = append(min_distances, min(distances[i, (i+1):len]))
+  }
+  min_distances = sort(min_distances)
+  deriv = derivate(min_distances)
+  
+  m = 3*mean(deriv)
+  n_followed = 0
+  max = 4
+  for( i in 0:len){
+    if(deriv[len-i] < m ) {
+      if ( n_followed >= max ) break
+      else n_followed = n_followed +1
+    } else{
+      n_followed = 0
+    }
+  }
+  eps = min_distances[len-i+1]
+  return(DB_cross_validation(file, data, eps = eps, MinPts = min_pts))
+  
 }
 
 #=====================================================================
@@ -423,6 +489,10 @@ for ( i in 1:1 ) {
       for( eps in seq(0.04, 0.1, by=0.01)){
         models <- append(models, paste("DB", eps, min_pts, sep="_"))
       }
+    }
+    
+    for( j in 3:6 ){
+      models <- append(models, paste("AdaptativeDB", j, sep="_"))
     }
     
     for( j in 3:15 ){
@@ -500,7 +570,7 @@ for ( i in 1:1 ) {
       }
       
       if (plot_BIC){
-        cl = plot_colour_mcluster(f, normalized_deltas)
+        cl = Mclust(normalized_deltas, G=1:MM_G)
         plot(cl$BIC)
         title(f)
       }
@@ -519,7 +589,7 @@ for ( i in 1:1 ) {
           print(paste("applying model:", model))
           if ( startsWith(model, "KMeans") ){
             num = as.numeric(strsplit(model, "_")[[1]][2])
-            scores = KNN_cross_validation(f, data, num_centers = num)
+            scores = Kmeans_cross_validation(f, data, num_centers = num)
           } else if (startsWith(model, "DB") ){
             model_data = strsplit(model, "_")[[1]]
             eps = as.numeric(model_data[2])
@@ -535,6 +605,11 @@ for ( i in 1:1 ) {
             model_data = strsplit(model, "_")[[1]]
             num_centers = as.numeric(model_data[2])
             scores = KMENOIDS_cross_validation(f, data, num_centers )
+          } else if (startsWith("AdaptativeDB")){
+            model_data = strsplit(model, "_")[[1]]
+            min_pts = as.numeric(model_data[2])
+            scores = adaptative_DB(f, data, min_pts)
+            
           }
           
           purity_mean = mean(scores$purity)
