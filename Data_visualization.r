@@ -19,7 +19,7 @@ generate_PDF_per_file = F
 plot_filter = F
 plot_cluster = F
 plot_mcluster = F
-plot_BIC = F
+plot_BIC = T
 generate_COR = F
 generate_COR_ALL = F
 write_cluster_report = T
@@ -411,21 +411,21 @@ for ( i in 1:1 ) {
     if ( file.exists(file_output)) file.remove(file_output)
     
     models <- c()
-    for( j in 5:10 ){
+    for( j in 2:15 ){
       models <- append(models, paste("KMeans", j, sep="_"))
     }
     
-    for( j in 5:10 ){
+    for( j in 2:15 ){
       models <- append(models, paste("KMENOIDS", j, sep="_"))
     }
     
-    for( min_pts in 3:6 ){
+    for( min_pts in 2:8 ){
       for( eps in seq(0.04, 0.1, by=0.01)){
         models <- append(models, paste("DB", eps, min_pts, sep="_"))
       }
     }
     
-    for( j in 3:10 ){
+    for( j in 3:15 ){
       models <- append(models, paste("HDB", j, sep="_"))
     }
     
